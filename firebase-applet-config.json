@@ -1,12 +1,12 @@
 {
-  "projectId": "gen-lang-client-0453603926",
-  "appId": "1:1029946391522:web:edaff0782d9ad21cd197bb",
-  "apiKey": "AIzaSyCX0pSOxf2s8NGPiA2y2BzeUBXws-N2vy0",
-  "authDomain": "gen-lang-client-0453603926.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-zqchatboatk2-bfbd7e22-68c0-4ddf-8a35-4a00da186def",
-  "storageBucket": "gen-lang-client-0453603926.firebasestorage.app",
-  "messagingSenderId": "1029946391522",
-  "measurementId": "",
-  "oAuthClientId": "1029946391522-37rrre23b93sltu0tt5toj44teg5lej6.apps.googleusercontent.com",
-  "recaptchaSiteKey": ""
+  "projectId": "${FIREBASE_PROJECT_ID}",
+  "appId": "${FIREBASE_APP_ID}",
+  "apiKey": "${FIREBASE_API_KEY}",
+  "authDomain": "${FIREBASE_AUTH_DOMAIN}",
+  "firestoreDatabaseId": "${FIRESTORE_DATABASE_ID}",
+  "storageBucket": "${FIREBASE_STORAGE_BUCKET}",
+  "messagingSenderId": "${FIREBASE_MESSAGING_SENDER_ID}",
+  "measurementId": "${FIREBASE_MEASUREMENT_ID}",
+  "googleOAuthClientId": "${GOOGLE_OAUTH_CLIENT_ID}",
+  "recaptchaSiteKey": "${RECAPTCHA_SITE_KEY}"
 }
