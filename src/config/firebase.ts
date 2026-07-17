@@ -65,7 +65,7 @@ export function loadFirebaseConfig(): FirebaseConfig {
         messagingSenderId: 'VITE_FIREBASE_MESSAGING_SENDER_ID',
         appId: 'VITE_FIREBASE_APP_ID',
       };
-      return map[key as string] ?? key;
+      return map[key] ?? key;
     });
     throw new Error(
       `Firebase configuration is incomplete. Add the following to your .env.local file:\n` +
