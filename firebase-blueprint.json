@@ -1,0 +1,45 @@
+{
+  "entities": {
+    "VaultKey": {
+      "title": "VaultKey",
+      "description": "A secure API credential stored in the vault with role-based access controls",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-zA-Z0-9_\\-]+$", "maxLength": 64 },
+        "name": { "type": "string", "maxLength": 100 },
+        "prog": { "type": "string", "maxLength": 50 },
+        "val": { "type": "string", "maxLength": 500 },
+        "created": { "type": "string", "maxLength": 20 },
+        "active": { "type": "boolean" },
+        "allowedRoles": { "type": "array" },
+        "usageCount": { "type": "integer" },
+        "lastAccessedBy": { "type": "string", "maxLength": 50 },
+        "lastAccessedAt": { "type": "string", "maxLength": 20 }
+      },
+      "required": ["id", "name", "prog", "val", "created", "active", "allowedRoles", "usageCount"]
+    },
+    "VaultAudit": {
+      "title": "VaultAudit",
+      "description": "An audit log entry tracking vault key access and policy enforcement",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-zA-Z0-9_\\-]+$", "maxLength": 64 },
+        "message": { "type": "string", "maxLength": 500 },
+        "level": { "type": "string", "enum": ["INFO", "WARN", "CRIT"] },
+        "timestamp": { "type": "string", "maxLength": 50 },
+        "component": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["id", "message", "level", "timestamp", "component"]
+    }
+  },
+  "firestore": {
+    "vaultKeys/{keyId}": {
+      "schema": "#/entities/VaultKey",
+      "description": "Collection of secure keys with role-based permission settings"
+    },
+    "vaultAudits/{auditId}": {
+      "schema": "#/entities/VaultAudit",
+      "description": "Collection of automated security logs tracking all reveal and copy attempts"
+    }
+  }
+}

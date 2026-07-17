@@ -20,6 +20,8 @@ import {
 import { motion } from 'motion/react';
 import { cn } from '@/src/lib/utils';
 
+import { AgentRole } from '@/src/types';
+
 interface Agent {
   id: string;
   name: string;
@@ -29,6 +31,7 @@ interface Agent {
   duration: string;
   memory: string;
   lastAction: string;
+  role: AgentRole;
 }
 
 const agentsData: Agent[] = [
@@ -40,7 +43,8 @@ const agentsData: Agent[] = [
     tokens: '14.2k',
     duration: '12m 44s',
     memory: '1.2 GB',
-    lastAction: 'Crawling Pacific-Hub logistics'
+    lastAction: 'Crawling Pacific-Hub logistics',
+    role: AgentRole.RESEARCH
   },
   {
     id: 'A-02',
@@ -50,7 +54,8 @@ const agentsData: Agent[] = [
     tokens: '2.8k',
     duration: '1h 04m',
     memory: '422 MB',
-    lastAction: 'Illegal logic branch detected'
+    lastAction: 'Illegal logic branch detected',
+    role: AgentRole.SECURITY
   },
   {
     id: 'A-03',
@@ -60,7 +65,8 @@ const agentsData: Agent[] = [
     tokens: '0.4k',
     duration: '2d 14h',
     memory: '12 MB',
-    lastAction: 'Pushing local SQL updates'
+    lastAction: 'Pushing local SQL updates',
+    role: AgentRole.SYSTEM
   },
   {
     id: 'A-04',
@@ -70,7 +76,8 @@ const agentsData: Agent[] = [
     tokens: '184k',
     duration: '5m 12s',
     memory: '4.8 GB',
-    lastAction: 'Deployment v0.4.2 successful'
+    lastAction: 'Deployment v0.4.2 successful',
+    role: AgentRole.ORCHESTRATOR
   },
   {
     id: 'A-05',
@@ -80,7 +87,8 @@ const agentsData: Agent[] = [
     tokens: '44k',
     duration: '14h 22m',
     memory: '8.4 GB',
-    lastAction: 'Re-indexing operational timeline'
+    lastAction: 'Re-indexing operational timeline',
+    role: AgentRole.DEVELOPER
   }
 ];
 
@@ -149,7 +157,12 @@ export function AgentsDashboard() {
                       {agent.status === 'idle' && <Zap size={24} />}
                     </div>
                     <div>
-                      <h3 className="text-on-void font-bold text-base group-hover:text-neon-primary transition-colors">{agent.name}</h3>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-on-void font-bold text-base group-hover:text-neon-primary transition-colors">{agent.name}</h3>
+                        <span className="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase border border-ghost-border bg-surface-high text-on-void-muted">
+                           {agent.role}
+                        </span>
+                      </div>
                       <p className="text-[10px] font-mono text-on-void-muted uppercase tracking-widest">{agent.type}</p>
                     </div>
                   </div>

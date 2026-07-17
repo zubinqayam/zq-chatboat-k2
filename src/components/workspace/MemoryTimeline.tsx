@@ -20,6 +20,15 @@ import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '@/src/lib/utils';
 
 // Data structures
+interface ALGAReport {
+  composite: number;
+  accuracy: number;
+  logic: number;
+  governance: number; // Hard gate if < 90
+  alignment: number;
+  decision: 'ACCEPT' | 'QUARANTINE' | 'REJECT';
+}
+
 interface TimelineEvent {
   id: string;
   type: 'prompt' | 'output' | 'deployment' | 'fix' | 'audit' | 'pr' | 'sync';
@@ -28,6 +37,7 @@ interface TimelineEvent {
   description: string;
   meta?: string;
   status?: 'success' | 'warning' | 'info';
+  algaReport?: ALGAReport;
   details?: {
     logs: string[];
     metrics?: Record<string, string>;
@@ -42,6 +52,7 @@ const timelineData: TimelineEvent[] = [
     title: 'Local Memory Synchronized',
     description: 'ElectricSQL queue cleared. 4 pending updates merged into global namespace.',
     status: 'success',
+    algaReport: { composite: 92.4, accuracy: 94, logic: 90, governance: 95, alignment: 91, decision: 'ACCEPT' },
     details: {
       logs: [
         'Queue: fetching pending transactions...',
@@ -60,6 +71,7 @@ const timelineData: TimelineEvent[] = [
     description: 'Version v0.4.2-stable pushed to Northern Hemisphere cluster. 12 data siphons active.',
     meta: 'DEPLOY_ID: ZQ-889-X',
     status: 'success',
+    algaReport: { composite: 89.2, accuracy: 88, logic: 85, governance: 98, alignment: 85, decision: 'ACCEPT' },
     details: {
       logs: [
         'Orchestrator: Initializing node clusters...',
@@ -75,8 +87,9 @@ const timelineData: TimelineEvent[] = [
     type: 'audit',
     timestamp: '1h ago',
     title: 'ALGA Validation Check',
-    description: 'Security scan completed. 14 logic leaks identified and queued for remediation.',
+    description: 'Security scan completed. Illegal logic branch identified and isolated.',
     status: 'warning',
+    algaReport: { composite: 64.5, accuracy: 70, logic: 40, governance: 45, alignment: 60, decision: 'QUARANTINE' },
     details: {
       logs: [
         'Security: Full scan initiated...',
@@ -93,6 +106,7 @@ const timelineData: TimelineEvent[] = [
     title: 'PR Review: Logistic_Optimization',
     description: 'ZQ_COORDINATOR approved code changes. Regression path verified via simulation.',
     meta: 'PR #124',
+    algaReport: { composite: 94.1, accuracy: 96, logic: 92, governance: 98, alignment: 90, decision: 'ACCEPT' },
     details: {
       logs: [
         'Review: Diff analysis complete',
@@ -109,6 +123,7 @@ const timelineData: TimelineEvent[] = [
     title: 'Hotfix: Latency Regression',
     description: 'Resolved high-frequency packet loss in Pacific-Hub nodes by rebalancing neural load.',
     status: 'success',
+    algaReport: { composite: 88.4, accuracy: 90, logic: 88, governance: 92, alignment: 82, decision: 'ACCEPT' },
     details: {
       logs: [
         'Alert: Packet loss exceeded 1.5%',
@@ -124,6 +139,7 @@ const timelineData: TimelineEvent[] = [
     timestamp: 'Yesterday',
     title: 'AI Operational Response',
     description: 'Generated potential outcomes for internal API Vault integration. Recommended path: Non-linear regression.',
+    algaReport: { composite: 91.2, accuracy: 94, logic: 95, governance: 98, alignment: 75, decision: 'ACCEPT' },
     details: {
       logs: [
         'Thinking: Expanding logic branches...',
@@ -139,6 +155,7 @@ const timelineData: TimelineEvent[] = [
     timestamp: 'Yesterday',
     title: 'System Command: /analyze-nodes',
     description: 'Root user requested deep-scan of terminal logistics paths for anomalies.',
+    algaReport: { composite: 95.0, accuracy: 100, logic: 90, governance: 100, alignment: 90, decision: 'ACCEPT' },
     details: {
       logs: [
         'Input: /analyze-nodes --deep',
@@ -367,6 +384,16 @@ export function MemoryTimeline() {
                       <h3 className="text-on-void font-bold text-sm group-hover:text-neon-tertiary transition-colors">
                         {highlightText(event.title, searchQuery)}
                       </h3>
+                      {event.algaReport && (
+                        <div className={cn(
+                          "px-1.5 py-0.5 rounded text-[8px] font-bold border flex items-center gap-1",
+                          event.algaReport.decision === 'ACCEPT' ? "border-neon-primary bg-neon-primary/10 text-neon-primary" : 
+                          event.algaReport.decision === 'QUARANTINE' ? "border-amber-500 bg-amber-500/10 text-amber-500" :
+                          "border-red-500 bg-red-500/10 text-red-500"
+                        )}>
+                          ALGA: {event.algaReport.composite.toFixed(1)}
+                        </div>
+                      )}
                       {event.status && (
                         <div className={cn(
                           "px-2 py-0.5 rounded text-[9px] font-bold border flex items-center gap-1",
@@ -393,7 +420,52 @@ export function MemoryTimeline() {
                           className="overflow-hidden"
                         >
                           <div className="mt-6 pt-6 border-t border-ghost-border space-y-6">
-                            {/* Metrics Grid */}
+                            {/* ALGA Detailed Report */}
+                            {event.algaReport && (
+                              <div className="bg-void/40 p-4 rounded-xl border border-ghost-border/30 space-y-4 shadow-inner">
+                                <div className="flex items-center justify-between">
+                                  <h4 className="text-[10px] uppercase tracking-widest font-bold text-neon-tertiary flex items-center gap-2">
+                                    <ShieldCheck size={12} />
+                                    ALGA Policy Verification
+                                  </h4>
+                                  <span className={cn(
+                                    "px-2 py-0.5 rounded text-[10px] font-mono font-bold border",
+                                    event.algaReport.decision === 'ACCEPT' ? "text-neon-primary bg-neon-primary/10 border-neon-primary/20" : 
+                                    event.algaReport.decision === 'QUARANTINE' ? "text-amber-500 bg-amber-500/10 border-amber-500/20" :
+                                    "text-red-500 bg-red-500/10 border-red-500/20"
+                                  )}>
+                                    DECISION: {event.algaReport.decision}
+                                  </span>
+                                </div>
+                                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                                  {[
+                                    { label: 'Composite', val: event.algaReport.composite },
+                                    { label: 'Accuracy', val: event.algaReport.accuracy },
+                                    { label: 'Logic', val: event.algaReport.logic },
+                                    { label: 'Governance', val: event.algaReport.governance },
+                                    { label: 'Alignment', val: event.algaReport.alignment }
+                                  ].map(item => (
+                                    <div key={item.label} className="space-y-1">
+                                      <div className="text-[8px] uppercase text-on-void-muted font-mono">{item.label}</div>
+                                      <div className="h-1 bg-void rounded-full overflow-hidden">
+                                        <motion.div 
+                                          initial={{ width: 0 }}
+                                          animate={{ width: `${item.val}%` }}
+                                          className={cn(
+                                            "h-full rounded-full transition-all",
+                                            item.val >= 90 ? "bg-neon-primary" : 
+                                            item.val >= 70 ? "bg-amber-500" : "bg-red-500"
+                                          )}
+                                        />
+                                      </div>
+                                      <div className="text-[10px] font-bold text-on-void text-right">{item.val}%</div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                             {/* Metrics Grid */}
                             {event.details.metrics && (
                               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 {Object.entries(event.details.metrics).map(([label, value]) => (

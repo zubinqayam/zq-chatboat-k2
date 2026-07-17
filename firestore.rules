@@ -1,0 +1,62 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+    
+    // Global Helper Primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isValidId(id) {
+      return id is string && id.size() <= 64 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+    
+    // Entity helper validation functions
+    function isValidVaultKey(data) {
+      return data.id is string && data.id.size() <= 64 && data.id.matches('^[a-zA-Z0-9_\\-]+$')
+        && data.name is string && data.name.size() <= 100
+        && data.prog is string && data.prog.size() <= 50
+        && data.val is string && data.val.size() <= 500
+        && data.created is string && data.created.size() <= 20
+        && data.active is bool
+        && data.allowedRoles is list
+        && data.usageCount is int
+        && (!('lastAccessedBy' in data) || data.lastAccessedBy is string && data.lastAccessedBy.size() <= 50)
+        && (!('lastAccessedAt' in data) || data.lastAccessedAt is string && data.lastAccessedAt.size() <= 20);
+    }
+    
+    function isValidVaultAudit(data) {
+      return data.id is string && data.id.size() <= 64 && data.id.matches('^[a-zA-Z0-9_\\-]+$')
+        && data.message is string && data.message.size() <= 500
+        && data.level is string && (data.level == 'INFO' || data.level == 'WARN' || data.level == 'CRIT')
+        && data.timestamp is string && data.timestamp.size() <= 50
+        && data.component is string && data.component.size() <= 50;
+    }
+    
+    match /vaultKeys/{keyId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(keyId) && request.resource.data.id == keyId && isValidVaultKey(request.resource.data);
+      allow update: if isSignedIn() && isValidId(keyId) && isValidVaultKey(request.resource.data) 
+        && request.resource.data.id == resource.data.id
+        && request.resource.data.created == resource.data.created
+        && (
+          // Action 1: Access tracking (reveal/copy log update)
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['usageCount', 'lastAccessedBy', 'lastAccessedAt']) ||
+          // Action 2: Standard Key modification
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['active', 'name', 'prog', 'val', 'allowedRoles', 'usageCount', 'lastAccessedBy', 'lastAccessedAt'])
+        );
+      allow delete: if false; // Deletes are blocked to enforce retention
+    }
+    
+    match /vaultAudits/{auditId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(auditId) && request.resource.data.id == auditId && isValidVaultAudit(request.resource.data);
+      allow update, delete: if false; // Append-only audit logs
+    }
+  }
+}

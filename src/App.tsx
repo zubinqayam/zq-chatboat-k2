@@ -12,6 +12,7 @@ import { MemoryTimeline } from './components/workspace/MemoryTimeline';
 import { AgentsDashboard } from './components/workspace/AgentsDashboard';
 import { ProjectsDashboard } from './components/workspace/ProjectsDashboard';
 import { VaultDashboard } from './components/workspace/VaultDashboard';
+import { WorkspaceDashboard } from './components/workspace/WorkspaceDashboard';
 import { NewBranchModal } from './components/ui/NewBranchModal';
 
 export default function App() {
@@ -28,6 +29,8 @@ export default function App() {
         return <ProjectsDashboard />;
       case 'vault':
         return <VaultDashboard />;
+      case 'integrations':
+        return <WorkspaceDashboard />;
       case 'workspace':
       default:
         return <ChatArea />;
