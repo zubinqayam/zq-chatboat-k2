@@ -6,3 +6,5 @@ coverage/
 *.log
 .env*
 !.env.example
+# Local Firebase client config — keep real values out of version control
+firebase-applet-config.json
